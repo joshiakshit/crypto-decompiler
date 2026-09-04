@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cryptscan"
+version = "0.1.0"
+description = "Static analysis of Android APKs for cryptographic misuse"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Akshit Joshi", email = "joshiakshit108@gmail.com" }]
+keywords = ["android", "apk", "cryptography", "static-analysis", "security"]
+dependencies = [
+    "androguard>=4.1,<5",
+    "click>=8.1",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dynamic = ["frida-tools>=1.6"]
+dev = ["pytest>=8.0", "ruff>=0.6", "build>=1.2"]
+
+[project.scripts]
+cryptscan = "cryptscan.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cryptscan"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
