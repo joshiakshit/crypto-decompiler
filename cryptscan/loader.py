@@ -14,6 +14,12 @@ def _sha256(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+def _session():
+    from androguard.session import Session
+
+    return Session(db_url="sqlite:///:memory:")
+
+
 def load(path: str | Path) -> AnalysisContext:
     p = Path(path)
     if p.suffix.lower() == ".dex":
@@ -24,7 +30,7 @@ def load(path: str | Path) -> AnalysisContext:
 def _load_apk(p: Path) -> AnalysisContext:
     from androguard.misc import AnalyzeAPK
 
-    apk, _, dx = AnalyzeAPK(str(p))
+    apk, _, dx = AnalyzeAPK(str(p), session=_session())
     target = {
         "path": str(p),
         "sha256": _sha256(p),
@@ -38,7 +44,7 @@ def _load_apk(p: Path) -> AnalysisContext:
 def _load_dex(p: Path) -> AnalysisContext:
     from androguard.misc import AnalyzeDex
 
-    _, _, dx = AnalyzeDex(str(p))
+    _, _, dx = AnalyzeDex(str(p), session=_session())
     target = {
         "path": str(p),
         "sha256": _sha256(p),

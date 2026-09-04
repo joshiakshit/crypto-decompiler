@@ -17,6 +17,7 @@ sample_apks/
 *.apk.json
 out.json
 out.html
+androguard.db
 
 # editor/agent
 .claude/
