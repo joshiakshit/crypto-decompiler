@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CryptScan report - {{ target.package or target.path }}</title>
+<style>
+  :root {
+    --critical: #b00020; --high: #e8590c; --medium: #f08c00; --low: #1c7ed6;
+    --bg: #f5f6f8; --card: #ffffff; --ink: #1f2933; --muted: #66707a; --line: #e3e6ea;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+  header h1 { margin: 0 0 4px; font-size: 26px; }
+  header .sub { color: var(--muted); font-size: 14px; }
+  .meta { margin: 20px 0; padding: 16px 18px; background: var(--card);
+          border: 1px solid var(--line); border-radius: 10px; }
+  .meta dl { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; margin: 0; }
+  .meta dt { color: var(--muted); } .meta dd { margin: 0; font-family: ui-monospace, monospace; word-break: break-all; }
+  .bar { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 28px; }
+  .pill { flex: 1 1 160px; padding: 14px 16px; border-radius: 10px; color: #fff; }
+  .pill .n { font-size: 28px; font-weight: 700; display: block; }
+  .pill .l { font-size: 13px; opacity: .92; }
+  .pill.critical { background: var(--critical); } .pill.high { background: var(--high); }
+  .pill.medium { background: var(--medium); } .pill.low { background: var(--low); }
+  .finding { background: var(--card); border: 1px solid var(--line);
+             border-left: 5px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 12px 0; }
+  .finding.critical { border-left-color: var(--critical); }
+  .finding.high { border-left-color: var(--high); }
+  .finding.medium { border-left-color: var(--medium); }
+  .finding.low { border-left-color: var(--low); }
+  .finding h3 { margin: 0 0 8px; font-size: 17px; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .badge.sev { color: #fff; }
+  .badge.sev.critical { background: var(--critical); } .badge.sev.high { background: var(--high); }
+  .badge.sev.medium { background: var(--medium); } .badge.sev.low { background: var(--low); }
+  .badge.plain { background: #eef1f4; color: var(--muted); }
+  .kv { margin: 8px 0; }
+  .kv .k { color: var(--muted); font-size: 13px; }
+  code, .loc { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .evidence { background: #0f1720; color: #e6edf3; padding: 10px 12px; border-radius: 8px;
+              overflow-x: auto; margin: 6px 0; }
+  .rem { border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 10px; color: #384049; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  footer { margin-top: 32px; color: var(--muted); font-size: 12px; text-align: center; }
+  a { color: var(--low); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>CryptScan report</h1>
+    <div class="sub">{{ tool }} {{ version }} &middot; {{ findings | length }} finding(s) &middot; {{ scan_seconds }}s</div>
+  </header>
+
+  <section class="meta">
+    <dl>
+      <dt>Package</dt><dd>{{ target.package or "-" }}</dd>
+      <dt>File</dt><dd>{{ target.path }}</dd>
+      <dt>SHA-256</dt><dd>{{ target.sha256 }}</dd>
+      <dt>Min / Target SDK</dt><dd>{{ target.min_sdk or "-" }} / {{ target.target_sdk or "-" }}</dd>
+    </dl>
+  </section>
+
+  <section class="bar">
+    {% for level in ["Critical", "High", "Medium", "Low"] %}
+    <div class="pill {{ level | lower }}">
+      <span class="n">{{ summary[level] }}</span>
+      <span class="l">{{ level }}</span>
+    </div>
+    {% endfor %}
+  </section>
+
+  {% if findings %}
+    {% for f in findings %}
+    <article class="finding {{ f.severity | lower }}">
+      <div class="badges">
+        <span class="badge sev {{ f.severity | lower }}">{{ f.severity }}</span>
+        <span class="badge plain">{{ f.rule_id }}</span>
+        <span class="badge plain">Confidence: {{ f.confidence }}</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/{{ f.cwe | replace('CWE-', '') }}.html">{{ f.cwe }}</a>
+        </span>
+      </div>
+      <h3>{{ f.title }}</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">{{ f.location.class }} &rarr; {{ f.location.method }}{{ f.location.descriptor }} @ {{ f.location.offset }}</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>{{ f.evidence }}</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> {{ f.remediation }}</div>
+    </article>
+    {% endfor %}
+  {% else %}
+    <div class="empty">No cryptographic misuse detected.</div>
+  {% endif %}
+
+  <footer>Generated by CryptScan &middot; static analysis, verify findings manually.</footer>
+</div>
+</body>
+</html>
