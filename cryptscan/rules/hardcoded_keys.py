@@ -9,7 +9,7 @@ from .base import Rule
 
 _SINK = (
     r"L(javax/crypto/spec/SecretKeySpec|javax/crypto/spec/IvParameterSpec"
-    r"|javax/crypto/Cipher|javax/crypto/Mac);"
+    r"|javax/crypto/spec/PBEKeySpec|javax/crypto/SecretKeyFactory);"
 )
 
 
@@ -28,6 +28,8 @@ class HardcodedKeysRule(Rule):
         findings: list[Finding] = []
         for sa in ctx.dx.get_strings():
             value = sa.get_value()
+            if "/" in value:  # transforms, URLs and paths are not key bytes
+                continue
             if not is_high_entropy_secret(value):
                 continue
             for cls, meth in sa.get_xref_from():

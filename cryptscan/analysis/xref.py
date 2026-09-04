@@ -3,6 +3,16 @@ from __future__ import annotations
 import re
 from collections.abc import Iterator
 
+from androguard.core.dex import Operand
+
+
+def _reg_operands(ins) -> list[int]:
+    return [
+        int(op[1])
+        for op in ins.get_operands()
+        if isinstance(op, tuple) and int(op[0]) == int(Operand.REGISTER)
+    ]
+
 
 def _str_operands(ins) -> list[str]:
     values = []
@@ -26,6 +36,25 @@ def invoke_targets(em) -> Iterator[tuple[int, str]]:
             for value in _str_operands(ins):
                 if "->" in value:
                     yield off, value
+
+
+def getinstance_args(em, api_pattern: str) -> Iterator[tuple[int, str]]:
+    rx = re.compile(api_pattern)
+    reg_value: dict[int, tuple[int, str]] = {}
+    for off, ins in em.get_instructions_idx():
+        name = ins.get_name()
+        if name.startswith("const-string"):
+            regs = _reg_operands(ins)
+            literals = [s for s in _str_operands(ins) if "->" not in s]
+            if regs and literals:
+                reg_value[regs[0]] = (off, literals[0])
+        elif name.startswith("invoke"):
+            targets = [t for t in _str_operands(ins) if "->" in t]
+            if targets and rx.search(targets[0]):
+                for reg in _reg_operands(ins):
+                    if reg in reg_value:
+                        yield reg_value[reg]
+                        break
 
 
 def method_invokes(em, pattern: str) -> bool:
