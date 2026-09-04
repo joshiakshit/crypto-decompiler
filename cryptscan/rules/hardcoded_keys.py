@@ -22,7 +22,9 @@ class HardcodedKeysRule(Rule):
     name = "Hardcoded cryptographic key"
     severity = S.CRITICAL
     cwe = "CWE-321"
-    remediation = "Derive keys at runtime or load them from the Android Keystore. Never embed key material."
+    remediation = (
+        "Load keys from the Android Keystore or derive them at runtime; never embed key bytes."
+    )
 
     def analyze(self, ctx: AnalysisContext) -> list[Finding]:
         findings: list[Finding] = []

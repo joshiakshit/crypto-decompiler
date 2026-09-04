@@ -30,8 +30,12 @@ def main() -> None:
 
 @main.command()
 @click.argument("apk", type=click.Path(exists=True, dir_okay=False, path_type=Path))
-@click.option("--json", "json_out", type=click.Path(path_type=Path), help="Write a JSON report here.")
-@click.option("--html", "html_out", type=click.Path(path_type=Path), help="Write an HTML report here.")
+@click.option(
+    "--json", "json_out", type=click.Path(path_type=Path), help="Write a JSON report here."
+)
+@click.option(
+    "--html", "html_out", type=click.Path(path_type=Path), help="Write an HTML report here."
+)
 @click.option("--rules", "rules_csv", help="Comma-separated rule ids (default: all).")
 @click.option(
     "--min-severity",
@@ -64,8 +68,12 @@ def scan(apk, json_out, html_out, rules_csv, min_severity, fail_on) -> None:
 
 @main.command()
 @click.argument("directory", type=click.Path(exists=True, file_okay=False, path_type=Path))
-@click.option("--csv", "csv_out", type=click.Path(path_type=Path), help="Write the summary CSV here.")
-@click.option("--json-dir", type=click.Path(path_type=Path), help="Write per-APK JSON reports here.")
+@click.option(
+    "--csv", "csv_out", type=click.Path(path_type=Path), help="Write the summary CSV here."
+)
+@click.option(
+    "--json-dir", type=click.Path(path_type=Path), help="Write per-APK JSON reports here."
+)
 @click.option("--jobs", type=int, default=None, help="Parallel workers (default: CPU count).")
 def corpus(directory, csv_out, json_dir, jobs) -> None:
     """Batch-scan every APK in a directory."""

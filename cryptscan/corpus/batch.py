@@ -43,7 +43,7 @@ def scan_dir(
 
     rows: list[dict] = []
     with ProcessPoolExecutor(max_workers=jobs) as pool:
-        for (path, _), (row, json_text) in zip(args, pool.map(_scan_one, args)):
+        for (path, _), (row, json_text) in zip(args, pool.map(_scan_one, args), strict=False):
             rows.append(row)
             if json_dir and json_text:
                 (Path(json_dir) / f"{Path(path).stem}.json").write_text(json_text)

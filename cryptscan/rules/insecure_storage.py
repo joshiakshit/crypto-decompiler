@@ -19,7 +19,9 @@ class InsecureStorageRule(Rule):
     name = "Secret in SharedPreferences"
     severity = S.MEDIUM
     cwe = "CWE-312"
-    remediation = "Store secrets in the Android Keystore or EncryptedSharedPreferences, not plain preferences."
+    remediation = (
+        "Use the Android Keystore or EncryptedSharedPreferences, not plain SharedPreferences."
+    )
 
     def analyze(self, ctx: AnalysisContext) -> list[Finding]:
         findings: list[Finding] = []
