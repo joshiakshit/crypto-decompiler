@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CryptScan report - com.cryptscan.samples</title>
+<style>
+  :root {
+    --critical: #b00020; --high: #e8590c; --medium: #f08c00; --low: #1c7ed6;
+    --bg: #f5f6f8; --card: #ffffff; --ink: #1f2933; --muted: #66707a; --line: #e3e6ea;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+  header h1 { margin: 0 0 4px; font-size: 26px; }
+  header .sub { color: var(--muted); font-size: 14px; }
+  .meta { margin: 20px 0; padding: 16px 18px; background: var(--card);
+          border: 1px solid var(--line); border-radius: 10px; }
+  .meta dl { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; margin: 0; }
+  .meta dt { color: var(--muted); } .meta dd { margin: 0; font-family: ui-monospace, monospace; word-break: break-all; }
+  .bar { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 28px; }
+  .pill { flex: 1 1 160px; padding: 14px 16px; border-radius: 10px; color: #fff; }
+  .pill .n { font-size: 28px; font-weight: 700; display: block; }
+  .pill .l { font-size: 13px; opacity: .92; }
+  .pill.critical { background: var(--critical); } .pill.high { background: var(--high); }
+  .pill.medium { background: var(--medium); } .pill.low { background: var(--low); }
+  .finding { background: var(--card); border: 1px solid var(--line);
+             border-left: 5px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 12px 0; }
+  .finding.critical { border-left-color: var(--critical); }
+  .finding.high { border-left-color: var(--high); }
+  .finding.medium { border-left-color: var(--medium); }
+  .finding.low { border-left-color: var(--low); }
+  .finding h3 { margin: 0 0 8px; font-size: 17px; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .badge.sev { color: #fff; }
+  .badge.sev.critical { background: var(--critical); } .badge.sev.high { background: var(--high); }
+  .badge.sev.medium { background: var(--medium); } .badge.sev.low { background: var(--low); }
+  .badge.plain { background: #eef1f4; color: var(--muted); }
+  .kv { margin: 8px 0; }
+  .kv .k { color: var(--muted); font-size: 13px; }
+  code, .loc { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .evidence { background: #0f1720; color: #e6edf3; padding: 10px 12px; border-radius: 8px;
+              overflow-x: auto; margin: 6px 0; }
+  .rem { border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 10px; color: #384049; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  footer { margin-top: 32px; color: var(--muted); font-size: 12px; text-align: center; }
+  a { color: var(--low); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>CryptScan report</h1>
+    <div class="sub">cryptscan 0.1.0 &middot; 13 finding(s) &middot; 0.24s</div>
+  </header>
+
+  <section class="meta">
+    <dl>
+      <dt>Package</dt><dd>com.cryptscan.samples</dd>
+      <dt>File</dt><dd>tests/fixtures/samples.apk</dd>
+      <dt>SHA-256</dt><dd>83dd6dff7e6a0a349ff9e12109842529a0a0fd82ae1789c6507e0810716663a7</dd>
+      <dt>Min / Target SDK</dt><dd>21 / 21</dd>
+    </dl>
+  </section>
+
+  <section class="bar">
+    
+    <div class="pill critical">
+      <span class="n">5</span>
+      <span class="l">Critical</span>
+    </div>
+    
+    <div class="pill high">
+      <span class="n">5</span>
+      <span class="l">High</span>
+    </div>
+    
+    <div class="pill medium">
+      <span class="n">3</span>
+      <span class="l">Medium</span>
+    </div>
+    
+    <div class="pill low">
+      <span class="n">0</span>
+      <span class="l">Low</span>
+    </div>
+    
+  </section>
+
+  
+    
+    <article class="finding critical">
+      <div class="badges">
+        <span class="badge sev critical">Critical</span>
+        <span class="badge plain">CS001</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/321.html">CWE-321</a>
+        </span>
+      </div>
+      <h3>Hardcoded cryptographic key or secret</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnFieldKey; &rarr; <init>()V @ 6</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>hunt...[25 chars]</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Load keys from the Android Keystore or derive them at runtime; never embed key bytes.</div>
+    </article>
+    
+    <article class="finding critical">
+      <div class="badges">
+        <span class="badge sev critical">Critical</span>
+        <span class="badge plain">CS001</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/321.html">CWE-321</a>
+        </span>
+      </div>
+      <h3>Hardcoded cryptographic key or secret</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnHardcodedKey; &rarr; enc([B)[B @ 4</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>7a1f...[32 chars]</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Load keys from the Android Keystore or derive them at runtime; never embed key bytes.</div>
+    </article>
+    
+    <article class="finding critical">
+      <div class="badges">
+        <span class="badge sev critical">Critical</span>
+        <span class="badge plain">CS001</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/321.html">CWE-321</a>
+        </span>
+      </div>
+      <h3>Hardcoded cryptographic key or secret</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnPassphraseKey; &rarr; key()Ljavax/crypto/SecretKey; @ 4</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>corr...[21 chars]</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Load keys from the Android Keystore or derive them at runtime; never embed key bytes.</div>
+    </article>
+    
+    <article class="finding critical">
+      <div class="badges">
+        <span class="badge sev critical">Critical</span>
+        <span class="badge plain">CS006</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/295.html">CWE-295</a>
+        </span>
+      </div>
+      <h3>TrustManager accepts all certificates</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnTrustAll; &rarr; checkClientTrusted([Ljava/security/cert/X509Certificate; Ljava/lang/String;)V @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>checkClientTrusted performs no certificate validation</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Validate the server certificate chain. Do not ship an empty TrustManager.</div>
+    </article>
+    
+    <article class="finding critical">
+      <div class="badges">
+        <span class="badge sev critical">Critical</span>
+        <span class="badge plain">CS006</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/295.html">CWE-295</a>
+        </span>
+      </div>
+      <h3>TrustManager accepts all certificates</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnTrustAll; &rarr; checkServerTrusted([Ljava/security/cert/X509Certificate; Ljava/lang/String;)V @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>checkServerTrusted performs no certificate validation</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Validate the server certificate chain. Do not ship an empty TrustManager.</div>
+    </article>
+    
+    <article class="finding high">
+      <div class="badges">
+        <span class="badge sev high">High</span>
+        <span class="badge plain">CS002</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/327.html">CWE-327</a>
+        </span>
+      </div>
+      <h3>Cipher uses ECB mode (AES/ECB/PKCS5Padding)</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnEcb; &rarr; enc([B Ljava/security/Key;)[B @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>AES/ECB/PKCS5Padding</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Use an authenticated mode such as AES/GCM/NoPadding. Never use ECB.</div>
+    </article>
+    
+    <article class="finding high">
+      <div class="badges">
+        <span class="badge sev high">High</span>
+        <span class="badge plain">CS002</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/327.html">CWE-327</a>
+        </span>
+      </div>
+      <h3>Cipher uses ECB mode (AES)</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnEcbDefault; &rarr; enc([B Ljava/security/Key;)[B @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>AES</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Use an authenticated mode such as AES/GCM/NoPadding. Never use ECB.</div>
+    </article>
+    
+    <article class="finding high">
+      <div class="badges">
+        <span class="badge sev high">High</span>
+        <span class="badge plain">CS003</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/327.html">CWE-327</a>
+        </span>
+      </div>
+      <h3>Broken cipher algorithm (DES/CBC/PKCS5Padding)</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnDesCipher; &rarr; enc([B Ljava/security/Key;)[B @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>DES/CBC/PKCS5Padding</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Use SHA-256+ for hashing and AES-GCM for encryption. Avoid MD5, SHA-1, DES, RC4.</div>
+    </article>
+    
+    <article class="finding high">
+      <div class="badges">
+        <span class="badge sev high">High</span>
+        <span class="badge plain">CS004</span>
+        <span class="badge plain">Confidence: Medium</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/330.html">CWE-330</a>
+        </span>
+      </div>
+      <h3>Insecure java.util.Random used for crypto material</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnWeakRandom; &rarr; enc([B Ljava/security/Key;)[B @ 12</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>Ljava/util/Random;-><init>()V</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Use java.security.SecureRandom for keys, IVs, nonces and salts.</div>
+    </article>
+    
+    <article class="finding high">
+      <div class="badges">
+        <span class="badge sev high">High</span>
+        <span class="badge plain">CS007</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/326.html">CWE-326</a>
+        </span>
+      </div>
+      <h3>Insecure TLS protocol requested (SSLv3)</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnTls; &rarr; ctx()Ljavax/net/ssl/SSLContext; @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>SSLv3</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Require TLS 1.2 or higher. Do not request SSLv3, TLS 1.0 or TLS 1.1.</div>
+    </article>
+    
+    <article class="finding medium">
+      <div class="badges">
+        <span class="badge sev medium">Medium</span>
+        <span class="badge plain">CS003</span>
+        <span class="badge plain">Confidence: High</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/327.html">CWE-327</a>
+        </span>
+      </div>
+      <h3>Weak hash algorithm (MD5)</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnBrokenHash; &rarr; hash([B)[B @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>MD5</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Use SHA-256+ for hashing and AES-GCM for encryption. Avoid MD5, SHA-1, DES, RC4.</div>
+    </article>
+    
+    <article class="finding medium">
+      <div class="badges">
+        <span class="badge sev medium">Medium</span>
+        <span class="badge plain">CS005</span>
+        <span class="badge plain">Confidence: Medium</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/312.html">CWE-312</a>
+        </span>
+      </div>
+      <h3>Secret stored in SharedPreferences (secret_key)</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnPrefsKey; &rarr; save(Landroid/content/SharedPreferences; Ljava/lang/String;)V @ 8</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>secret_key</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Use the Android Keystore or EncryptedSharedPreferences, not plain SharedPreferences.</div>
+    </article>
+    
+    <article class="finding medium">
+      <div class="badges">
+        <span class="badge sev medium">Medium</span>
+        <span class="badge plain">CS008</span>
+        <span class="badge plain">Confidence: Low</span>
+        <span class="badge plain">
+          <a href="https://cwe.mitre.org/data/definitions/327.html">CWE-327</a>
+        </span>
+      </div>
+      <h3>Custom byte-level crypto in encrypt()</h3>
+      <div class="kv">
+        <span class="k">Location</span><br>
+        <span class="loc">Lcom/cryptscan/samples/VulnXorCrypto; &rarr; encrypt([B [B)[B @ 0</span>
+      </div>
+      <div class="kv">
+        <span class="k">Evidence</span>
+        <div class="evidence"><code>bitwise operations on byte arrays, no javax.crypto call</code></div>
+      </div>
+      <div class="rem"><strong>Remediation.</strong> Replace custom byte manipulation with a vetted javax.crypto primitive.</div>
+    </article>
+    
+  
+
+  <footer>Generated by CryptScan &middot; static analysis, verify findings manually.</footer>
+</div>
+</body>
+</html>
