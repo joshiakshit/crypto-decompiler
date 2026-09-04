@@ -50,11 +50,26 @@ def getinstance_args(em, api_pattern: str) -> Iterator[tuple[int, str]]:
                 reg_value[regs[0]] = (off, literals[0])
         elif name.startswith("invoke"):
             targets = [t for t in _str_operands(ins) if "->" in t]
-            if targets and rx.search(targets[0]):
-                for reg in _reg_operands(ins):
-                    if reg in reg_value:
-                        yield reg_value[reg]
-                        break
+            regs = _reg_operands(ins)
+            if targets and regs and rx.search(targets[0]) and regs[0] in reg_value:
+                yield reg_value[regs[0]]
+
+
+def field_store_strings(em) -> Iterator[tuple[int, str, str]]:
+    reg_value: dict[int, tuple[int, str]] = {}
+    for off, ins in em.get_instructions_idx():
+        name = ins.get_name()
+        if name.startswith("const-string"):
+            regs = _reg_operands(ins)
+            literals = [s for s in _str_operands(ins) if "->" not in s]
+            if regs and literals:
+                reg_value[regs[0]] = (off, literals[0])
+        elif "put-object" in name:
+            regs = _reg_operands(ins)
+            fields = [s for s in _str_operands(ins) if "->" in s]
+            if regs and fields and regs[0] in reg_value:
+                off_value, value = reg_value[regs[0]]
+                yield off_value, value, fields[0]
 
 
 def method_invokes(em, pattern: str) -> bool:
