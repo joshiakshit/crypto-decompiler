@@ -46,12 +46,22 @@ def app_methods(dx) -> Iterator:
             yield ma
 
 
+def _const_offset(meth, value: str) -> int:
+    em = meth.get_method()
+    if em is None:
+        return 0
+    for off, s in const_strings(em):
+        if s == value:
+            return off
+    return 0
+
+
 def strings_matching(dx, pattern: str) -> Iterator[tuple[str, list[tuple[str, object, int]]]]:
     rx = re.compile(pattern)
     for sa in dx.get_strings():
         value = sa.get_value()
         if rx.search(value):
-            refs = [(cls.name, meth, off) for cls, meth, off in sa.get_xref_from()]
+            refs = [(cls.name, meth, _const_offset(meth, value)) for cls, meth in sa.get_xref_from()]
             yield value, refs
 
 
