@@ -7,6 +7,7 @@ from .broken_algorithms import BrokenAlgorithmsRule
 from .cert_validation import CertValidationRule
 from .ecb_mode import EcbModeRule
 from .hardcoded_keys import HardcodedKeysRule
+from .insecure_tls import InsecureTlsRule
 from .weak_random import WeakRandomnessRule
 
 ALL_RULES: list[Rule] = [
@@ -15,6 +16,7 @@ ALL_RULES: list[Rule] = [
     BrokenAlgorithmsRule(),
     WeakRandomnessRule(),
     CertValidationRule(),
+    InsecureTlsRule(),
 ]
 
 
