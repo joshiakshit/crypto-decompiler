@@ -5,8 +5,10 @@ from collections.abc import Iterable
 from .base import Rule
 from .broken_algorithms import BrokenAlgorithmsRule
 from .ecb_mode import EcbModeRule
+from .hardcoded_keys import HardcodedKeysRule
 
 ALL_RULES: list[Rule] = [
+    HardcodedKeysRule(),
     EcbModeRule(),
     BrokenAlgorithmsRule(),
 ]
