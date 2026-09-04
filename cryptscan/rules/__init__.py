@@ -3,10 +3,12 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from .base import Rule
+from .broken_algorithms import BrokenAlgorithmsRule
 from .ecb_mode import EcbModeRule
 
 ALL_RULES: list[Rule] = [
     EcbModeRule(),
+    BrokenAlgorithmsRule(),
 ]
 
 
