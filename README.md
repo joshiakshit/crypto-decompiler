@@ -78,7 +78,7 @@ cryptscan scan sample_apks/insecurebank.apk
 Scanning [InsecureBankv2](https://github.com/dineshshetty/Android-InsecureBankv2):
 
 ```
-com.android.insecurebankv2  -  9 findings (1 critical, 0 high, 8 medium, 0 low)  in 7.81s
+com.android.insecurebankv2  -  8 findings (1 critical, 0 high, 7 medium, 0 low)  in 7.81s
 [CRITICAL] CS001 Hardcoded cryptographic key or secret
     Lcom/android/insecurebankv2/CryptoClass; -> <init>  |  This...[32 chars]
 [MEDIUM] CS003 Weak hash algorithm (MD5)
