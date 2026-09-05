@@ -11,3 +11,8 @@ def test_insecure_tls_positive(samples_ctx):
 def test_insecure_tls_negative(samples_ctx):
     findings = InsecureTlsRule().analyze(samples_ctx)
     assert not [f for f in findings if "SafeTls" in f.class_name]
+
+
+def test_insecure_tls_decoy_negative(samples_ctx):
+    findings = InsecureTlsRule().analyze(samples_ctx)
+    assert not [f for f in findings if "DecoyTlsLog" in f.class_name]
