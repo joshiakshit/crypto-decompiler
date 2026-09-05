@@ -125,6 +125,22 @@ cross-references and does light method-local def-use to tie a constant to the AP
 consumes it (for example, the exact transform passed to `Cipher.getInstance`). The Java
 decompiler is never invoked, which keeps a typical scan well under 30 seconds.
 
+## Development
+
+Any Python 3.11+ works. This project was developed on 3.12 provisioned with
+[uv](https://github.com/astral-sh/uv):
+
+```bash
+uv venv --python 3.12 .venv && source .venv/bin/activate
+uv pip install -e ".[dev]"
+pytest -q
+ruff check . && ruff format --check .
+```
+
+The Android SDK is only needed to rebuild the test fixtures, not to run scans. Point
+`ANDROID_HOME` at an SDK that has `build-tools;34.0.0` and `platforms;android-34`, then run
+`tests/fixtures/build.sh` (see below). A local `sdk/` directory is git-ignored.
+
 ## Adding a rule
 
 1. Create `cryptscan/rules/my_rule.py` with a class that subclasses `Rule` and sets
