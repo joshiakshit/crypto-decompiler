@@ -3,7 +3,8 @@ import json
 import pytest
 
 from cryptscan.benchmark.corpus import Target, load_corpus
-from cryptscan.benchmark.score import RuleScore, score_corpus
+from cryptscan.benchmark.report import render_json, render_markdown
+from cryptscan.benchmark.score import BenchmarkResult, RuleScore, score_corpus
 from cryptscan.findings import Confidence, Finding, Report, Severity
 
 
@@ -158,3 +159,26 @@ def test_missing_target_skipped(tmp_path, monkeypatch):
     assert result.skipped == ["missing.apk"]
     assert result.per_rule == {}
     assert result.scored == 0
+
+
+def test_render_json_and_markdown():
+    result = BenchmarkResult(
+        per_rule={
+            "CS002": RuleScore("CS002", tp=1, fp=0, fn=0),
+            "CS001": RuleScore("CS001", tp=2, fp=1, fn=0),
+        },
+        overall=RuleScore("ALL", tp=3, fp=1, fn=0),
+        skipped=["missing.apk"],
+        scored=1,
+    )
+
+    data = json.loads(render_json(result))
+    assert "overall" in data
+    assert "per_rule" in data
+    assert "skipped" in data
+    assert data["skipped"] == ["missing.apk"]
+
+    md = render_markdown(result)
+    assert "| CS001 |" in md
+    assert "| CS002 |" in md
+    assert "| ALL |" in md
