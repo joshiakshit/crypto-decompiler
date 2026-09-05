@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from ..analysis.xref import app_methods, const_strings, method_invokes
+from ..analysis.xref import app_methods, invoke_arg_literals
 from ..context import AnalysisContext
 from ..findings import Confidence, Finding
 from ..findings import Severity as S
@@ -27,20 +27,20 @@ class InsecureStorageRule(Rule):
         findings: list[Finding] = []
         for ma in app_methods(ctx.dx):
             em = ma.get_method()
-            if not method_invokes(em, _PUTSTRING):
-                continue
-            for off, name in const_strings(em):
-                if _SECRET_NAME.search(name):
-                    findings.append(
-                        self.finding(
-                            title=f"Secret stored in SharedPreferences ({name})",
-                            class_name=ma.class_name,
-                            method=ma.name,
-                            descriptor=str(ma.descriptor),
-                            offset=off,
-                            evidence=name,
-                            confidence=Confidence.MEDIUM,
-                        )
+            seen: set[str] = set()
+            for off, literal in invoke_arg_literals(em, _PUTSTRING):
+                if literal in seen or not _SECRET_NAME.search(literal):
+                    continue
+                seen.add(literal)
+                findings.append(
+                    self.finding(
+                        title=f"Secret stored in SharedPreferences ({literal})",
+                        class_name=ma.class_name,
+                        method=ma.name,
+                        descriptor=str(ma.descriptor),
+                        offset=off,
+                        evidence=literal,
+                        confidence=Confidence.HIGH,
                     )
-                    break
+                )
         return findings

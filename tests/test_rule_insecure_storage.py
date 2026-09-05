@@ -11,3 +11,8 @@ def test_insecure_storage_positive(samples_ctx):
 def test_insecure_storage_negative(samples_ctx):
     findings = InsecureStorageRule().analyze(samples_ctx)
     assert not [f for f in findings if "SafePrefs" in f.class_name]
+
+
+def test_insecure_storage_decoy_negative(samples_ctx):
+    findings = InsecureStorageRule().analyze(samples_ctx)
+    assert not [f for f in findings if "DecoyPrefsHint" in f.class_name]
