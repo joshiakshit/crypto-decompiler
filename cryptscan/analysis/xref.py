@@ -38,7 +38,7 @@ def invoke_targets(em) -> Iterator[tuple[int, str]]:
                     yield off, value
 
 
-def getinstance_args(em, api_pattern: str) -> Iterator[tuple[int, str]]:
+def invoke_arg_literals(em, api_pattern: str) -> Iterator[tuple[int, str]]:
     rx = re.compile(api_pattern)
     reg_value: dict[int, tuple[int, str]] = {}
     for off, ins in em.get_instructions_idx():
@@ -50,9 +50,49 @@ def getinstance_args(em, api_pattern: str) -> Iterator[tuple[int, str]]:
                 reg_value[regs[0]] = (off, literals[0])
         elif name.startswith("invoke"):
             targets = [t for t in _str_operands(ins) if "->" in t]
-            regs = _reg_operands(ins)
-            if targets and regs and rx.search(targets[0]) and regs[0] in reg_value:
-                yield reg_value[regs[0]]
+            if not targets or not rx.search(targets[0]):
+                continue
+            for r in _reg_operands(ins):
+                if r in reg_value:
+                    yield reg_value[r]
+
+
+def getinstance_args(em, api_pattern: str) -> Iterator[tuple[int, str]]:
+    yield from invoke_arg_literals(em, api_pattern)
+
+
+def weak_random_material(em, weak_pattern: str, sink_pattern: str) -> Iterator[tuple[int, str]]:
+    weak_rx = re.compile(weak_pattern)
+    sink_rx = re.compile(sink_pattern)
+    tainted: dict[int, tuple[int, str]] = {}
+    last_weak: tuple[int, str] | None = None  # awaiting a following move-result
+    for off, ins in em.get_instructions_idx():
+        name = ins.get_name()
+        if name.startswith("move-result") and last_weak is not None:
+            for r in _reg_operands(ins):
+                tainted[r] = last_weak
+            last_weak = None
+            continue
+        last_weak = None
+        if name.startswith(("const", "new-array", "new-instance", "move")):
+            for r in _reg_operands(ins)[:1]:  # dest reg is first operand; clear stale taint
+                tainted.pop(r, None)
+            continue
+        if not name.startswith("invoke"):
+            continue
+        targets = [t for t in _str_operands(ins) if "->" in t]
+        if not targets:
+            continue
+        regs = _reg_operands(ins)
+        if weak_rx.search(targets[0]):
+            for r in regs:
+                tainted[r] = (off, targets[0])
+            last_weak = (off, targets[0])
+        elif sink_rx.search(targets[0]):
+            for r in regs:
+                if r in tainted:
+                    yield tainted[r]
+                    break
 
 
 def field_store_strings(em) -> Iterator[tuple[int, str, str]]:
