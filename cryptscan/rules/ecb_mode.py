@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from ..analysis.xref import app_methods, getinstance_args
+from ..analysis.xref import app_methods, invoke_arg_literals
 from ..context import AnalysisContext
 from ..findings import Confidence, Finding
 from ..findings import Severity as S
@@ -24,7 +24,7 @@ class EcbModeRule(Rule):
         findings: list[Finding] = []
         for ma in app_methods(ctx.dx):
             em = ma.get_method()
-            for off, transform in getinstance_args(em, _CIPHER_GET):
+            for off, transform in invoke_arg_literals(em, _CIPHER_GET):
                 if not (_EXPLICIT_ECB.search(transform) or _MODELESS.match(transform)):
                     continue
                 findings.append(

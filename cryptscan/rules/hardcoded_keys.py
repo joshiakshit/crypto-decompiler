@@ -7,7 +7,7 @@ from ..analysis.xref import (
     app_methods,
     const_offset,
     field_store_strings,
-    getinstance_args,
+    invoke_arg_literals,
     method_invokes,
 )
 from ..context import AnalysisContext
@@ -66,7 +66,7 @@ class HardcodedKeysRule(Rule):
 
         for ma, em in methods:
             # Any literal turned into key bytes; catches human-readable passphrases.
-            for off, value in getinstance_args(em, _GETBYTES):
+            for off, value in invoke_arg_literals(em, _GETBYTES, receiver=True):
                 if method_invokes(em, _SINK):
                     self._emit(
                         findings, seen, ma.class_name, ma.name, str(ma.descriptor), off, value

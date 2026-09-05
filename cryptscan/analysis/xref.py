@@ -23,6 +23,13 @@ def _str_operands(ins) -> list[str]:
     return values
 
 
+_REG_WRITE = ("move", "new-instance", "new-array", "const", "aget", "iget", "sget")
+
+
+def _clears_reg(name: str) -> bool:
+    return name.startswith(_REG_WRITE)
+
+
 def const_strings(em) -> Iterator[tuple[int, str]]:
     for off, ins in em.get_instructions_idx():
         if ins.get_name().startswith("const-string"):
@@ -38,7 +45,9 @@ def invoke_targets(em) -> Iterator[tuple[int, str]]:
                     yield off, value
 
 
-def invoke_arg_literals(em, api_pattern: str) -> Iterator[tuple[int, str]]:
+def invoke_arg_literals(
+    em, api_pattern: str, *, receiver: bool = False
+) -> Iterator[tuple[int, str]]:
     rx = re.compile(api_pattern)
     reg_value: dict[int, tuple[int, str]] = {}
     for off, ins in em.get_instructions_idx():
@@ -52,13 +61,20 @@ def invoke_arg_literals(em, api_pattern: str) -> Iterator[tuple[int, str]]:
             targets = [t for t in _str_operands(ins) if "->" in t]
             if not targets or not rx.search(targets[0]):
                 continue
-            for r in _reg_operands(ins):
+            regs = _reg_operands(ins)
+            if receiver:
+                wanted = regs[:1]
+            elif "static" in name:
+                wanted = regs
+            else:
+                wanted = regs[1:]
+            for r in wanted:
                 if r in reg_value:
                     yield reg_value[r]
-
-
-def getinstance_args(em, api_pattern: str) -> Iterator[tuple[int, str]]:
-    yield from invoke_arg_literals(em, api_pattern)
+        elif _clears_reg(name):
+            regs = _reg_operands(ins)
+            if regs:
+                reg_value.pop(regs[0], None)
 
 
 def weak_random_material(em, weak_pattern: str, sink_pattern: str) -> Iterator[tuple[int, str]]:
@@ -74,7 +90,7 @@ def weak_random_material(em, weak_pattern: str, sink_pattern: str) -> Iterator[t
             last_weak = None
             continue
         last_weak = None
-        if name.startswith(("const", "new-array", "new-instance", "move")):
+        if _clears_reg(name):
             for r in _reg_operands(ins)[:1]:  # dest reg is first operand; clear stale taint
                 tainted.pop(r, None)
             continue
@@ -110,6 +126,10 @@ def field_store_strings(em) -> Iterator[tuple[int, str, str]]:
             if regs and fields and regs[0] in reg_value:
                 off_value, value = reg_value[regs[0]]
                 yield off_value, value, fields[0]
+        elif _clears_reg(name):
+            regs = _reg_operands(ins)
+            if regs:
+                reg_value.pop(regs[0], None)
 
 
 def method_invokes(em, pattern: str) -> bool:
@@ -138,15 +158,6 @@ def const_offset(meth, value: str) -> int:
         if s == value:
             return off
     return 0
-
-
-def strings_matching(dx, pattern: str) -> Iterator[tuple[str, list[tuple[str, object, int]]]]:
-    rx = re.compile(pattern)
-    for sa in dx.get_strings():
-        value = sa.get_value()
-        if rx.search(value):
-            refs = [(cls.name, meth, const_offset(meth, value)) for cls, meth in sa.get_xref_from()]
-            yield value, refs
 
 
 def classes_implementing(dx, iface_pattern: str) -> Iterator:
