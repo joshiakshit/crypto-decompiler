@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from ..analysis.xref import method_invokes, strings_matching
+import re
+
+from ..analysis.xref import app_methods, invoke_arg_literals
 from ..context import AnalysisContext
 from ..findings import Confidence, Finding
 from ..findings import Severity as S
@@ -8,7 +10,7 @@ from .base import Rule
 
 _HASH = r"^(MD5|SHA-1|SHA1)$"
 _CIPHER = r"^(DESede|DES|RC4|ARCFOUR|RC2|Blowfish)(/.*)?$"
-_MESSAGE_DIGEST = r"L(java/security/MessageDigest|javax/crypto/Mac);->getInstance"
+_MD_GET = r"L(java/security/MessageDigest|javax/crypto/Mac);->getInstance"
 _CIPHER_GET = r"Ljavax/crypto/Cipher;->getInstance"
 
 
@@ -21,27 +23,24 @@ class BrokenAlgorithmsRule(Rule):
 
     def analyze(self, ctx: AnalysisContext) -> list[Finding]:
         findings: list[Finding] = []
-        findings += self._scan(ctx, _HASH, _MESSAGE_DIGEST, "Weak hash algorithm", S.MEDIUM)
-        findings += self._scan(ctx, _CIPHER, _CIPHER_GET, "Broken cipher algorithm", S.HIGH)
+        for ma in app_methods(ctx.dx):
+            em = ma.get_method()
+            for off, algo in invoke_arg_literals(em, _MD_GET):
+                if re.match(_HASH, algo):
+                    findings.append(self._make(ma, off, "Weak hash algorithm", algo, S.MEDIUM))
+            for off, algo in invoke_arg_literals(em, _CIPHER_GET):
+                if re.match(_CIPHER, algo):
+                    findings.append(self._make(ma, off, "Broken cipher algorithm", algo, S.HIGH))
         return findings
 
-    def _scan(self, ctx, value_re, api_re, title, severity) -> list[Finding]:
-        out: list[Finding] = []
-        for value, refs in strings_matching(ctx.dx, value_re):
-            for cls_name, meth, off in refs:
-                em = meth.get_method()
-                if em is None or not method_invokes(em, api_re):
-                    continue
-                out.append(
-                    self.finding(
-                        title=f"{title} ({value})",
-                        class_name=cls_name,
-                        method=meth.name,
-                        descriptor=str(meth.descriptor),
-                        offset=off,
-                        evidence=value,
-                        severity=severity,
-                        confidence=Confidence.HIGH,
-                    )
-                )
-        return out
+    def _make(self, ma, off: int, title: str, algo: str, severity: S) -> Finding:
+        return self.finding(
+            title=f"{title} ({algo})",
+            class_name=ma.class_name,
+            method=ma.name,
+            descriptor=str(ma.descriptor),
+            offset=off,
+            evidence=algo,
+            severity=severity,
+            confidence=Confidence.HIGH,
+        )

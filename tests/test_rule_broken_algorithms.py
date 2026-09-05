@@ -21,3 +21,8 @@ def test_broken_cipher_positive(samples_ctx):
 def test_broken_algorithms_negative(samples_ctx):
     findings = BrokenAlgorithmsRule().analyze(samples_ctx)
     assert not [f for f in findings if "Safe" in f.class_name]
+
+
+def test_broken_algorithms_decoy_negative(samples_ctx):
+    findings = BrokenAlgorithmsRule().analyze(samples_ctx)
+    assert not [f for f in findings if "DecoyWeakAlgoLog" in f.class_name]
