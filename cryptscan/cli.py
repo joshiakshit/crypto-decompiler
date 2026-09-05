@@ -87,6 +87,28 @@ def corpus(directory, csv_out, json_dir, jobs) -> None:
     click.echo(f"\nScanned {len(rows)} APK(s).")
 
 
+@main.command()
+@click.argument("corpus_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option(
+    "--json", "json_out", type=click.Path(path_type=Path), help="Write the JSON scorecard here."
+)
+@click.option(
+    "--md", "md_out", type=click.Path(path_type=Path), help="Write the Markdown scorecard here."
+)
+def benchmark(corpus_dir, json_out, md_out) -> None:
+    """Score the scanner against a labeled corpus."""
+    from .benchmark.corpus import load_corpus
+    from .benchmark.report import render_json, render_markdown
+    from .benchmark.score import score_corpus
+
+    result = score_corpus(load_corpus(corpus_dir))
+    if json_out:
+        json_out.write_text(render_json(result))
+    if md_out:
+        md_out.write_text(render_markdown(result))
+    click.echo(render_markdown(result))
+
+
 @main.command(name="rules")
 def rules_cmd() -> None:
     """List the detection rules."""
