@@ -11,3 +11,8 @@ def test_weak_random_positive(samples_ctx):
 def test_weak_random_negative(samples_ctx):
     findings = WeakRandomnessRule().analyze(samples_ctx)
     assert not [f for f in findings if "SafeSecureRandom" in f.class_name]
+
+
+def test_weak_random_decoy_negative(samples_ctx):
+    findings = WeakRandomnessRule().analyze(samples_ctx)
+    assert not [f for f in findings if "DecoyJitterRandom" in f.class_name]
