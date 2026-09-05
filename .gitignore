@@ -18,6 +18,7 @@ sample_apks/
 out.json
 out.html
 androguard.db
+benchmark/results.json
 
 # editor/agent
 .claude/

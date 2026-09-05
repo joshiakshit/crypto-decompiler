@@ -1,0 +1,22 @@
+{
+  "targets": [
+    {
+      "file": "../tests/fixtures/samples.apk",
+      "scope": ["Lcom/cryptscan/samples/"],
+      "expected": [
+        {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnHardcodedKey;"},
+        {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnPassphraseKey;"},
+        {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnFieldKey;"},
+        {"rule_id": "CS002", "class": "Lcom/cryptscan/samples/VulnEcb;"},
+        {"rule_id": "CS002", "class": "Lcom/cryptscan/samples/VulnEcbDefault;"},
+        {"rule_id": "CS003", "class": "Lcom/cryptscan/samples/VulnBrokenHash;"},
+        {"rule_id": "CS003", "class": "Lcom/cryptscan/samples/VulnDesCipher;"},
+        {"rule_id": "CS004", "class": "Lcom/cryptscan/samples/VulnWeakRandom;"},
+        {"rule_id": "CS005", "class": "Lcom/cryptscan/samples/VulnPrefsKey;"},
+        {"rule_id": "CS006", "class": "Lcom/cryptscan/samples/VulnTrustAll;"},
+        {"rule_id": "CS007", "class": "Lcom/cryptscan/samples/VulnTls;"},
+        {"rule_id": "CS008", "class": "Lcom/cryptscan/samples/VulnXorCrypto;"}
+      ]
+    }
+  ]
+}

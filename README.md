@@ -163,6 +163,33 @@ Java under `tests/fixtures/src/` and rebuild with a JDK and Android SDK build-to
 ANDROID_HOME=/path/to/android-sdk bash tests/fixtures/build.sh
 ```
 
+## Benchmark
+
+Score the scanner against a labeled corpus and get per-rule and overall precision,
+recall, and F1. The corpus is `benchmark/ground_truth.json`: a list of targets, each
+with a class-name scope and the expected `(rule, class)` findings for that scope.
+
+```bash
+cryptscan benchmark benchmark/ --md benchmark/RESULTS.md --json benchmark/results.json
+```
+
+Matching is at `(rule_id, class_name)` granularity, not per finding or offset, so
+duplicate findings in one class do not inflate the false-positive count. Current
+baseline ([benchmark/RESULTS.md](benchmark/RESULTS.md)), scored against the test
+fixtures:
+
+| Rule | TP | FP | FN | Precision | Recall | F1 |
+|------|----|----|----|-----------|--------|----|
+| CS001 | 3 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS002 | 2 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS003 | 2 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS004 | 1 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS005 | 1 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS006 | 1 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS007 | 1 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| CS008 | 1 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+| ALL | 12 | 0 | 0 | 1.000 | 1.000 | 1.000 |
+
 ## Dynamic verification (experimental)
 
 With a rooted device or emulator and `frida-server` running, install the extra and confirm
