@@ -7,6 +7,7 @@
         {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnHardcodedKey;"},
         {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnPassphraseKey;"},
         {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnFieldKey;"},
+        {"rule_id": "CS001", "class": "Lcom/cryptscan/samples/VulnCharsetKey;"},
         {"rule_id": "CS002", "class": "Lcom/cryptscan/samples/VulnEcb;"},
         {"rule_id": "CS002", "class": "Lcom/cryptscan/samples/VulnEcbDefault;"},
         {"rule_id": "CS003", "class": "Lcom/cryptscan/samples/VulnBrokenHash;"},

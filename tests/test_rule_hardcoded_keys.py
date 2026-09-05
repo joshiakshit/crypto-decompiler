@@ -20,6 +20,12 @@ def test_hardcoded_field_key_positive(samples_ctx):
     assert [f for f in findings if "VulnFieldKey" in f.class_name]
 
 
+def test_hardcoded_charset_key_single_finding(samples_ctx):
+    findings = HardcodedKeysRule().analyze(samples_ctx)
+    charset = [f for f in findings if "VulnCharsetKey" in f.class_name]
+    assert len(charset) == 1  # the passphrase only, not the "UTF-8" charset argument
+
+
 def test_hardcoded_key_negative(samples_ctx):
     findings = HardcodedKeysRule().analyze(samples_ctx)
     assert not [f for f in findings if "SafeKeystore" in f.class_name]
