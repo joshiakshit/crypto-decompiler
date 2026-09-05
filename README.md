@@ -190,6 +190,12 @@ fixtures:
 | CS008 | 1 | 0 | 0 | 1.000 | 1.000 | 1.000 |
 | ALL | 12 | 0 | 0 | 1.000 | 1.000 | 1.000 |
 
+CS003, CS004, CS005 and CS007 used to flag a value anywhere in a method that also
+called a matching API, instead of tracing the value into that call. Decoy fixtures
+that separate the two exposed the gap and dropped overall precision to 0.75. A
+def-use rewrite traces each literal into its sink and restored precision to 1.00,
+with recall held at 1.00.
+
 ## Dynamic verification (experimental)
 
 With a rooted device or emulator and `frida-server` running, install the extra and confirm
